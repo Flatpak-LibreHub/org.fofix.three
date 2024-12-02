@@ -1,0 +1,182 @@
+app-id: org.fofix.three
+runtime: org.freedesktop.Platform
+runtime-version: '23.08'
+sdk: org.freedesktop.Sdk
+command: fofix
+finish-args:
+  - --socket=x11
+  - --share=ipc
+  - --socket=pulseaudio
+  - --device=all
+  - --persist=.fofix
+cleanup:
+  - '*.a'
+  - '*.la'
+  - /include
+  - /lib/cmake
+  - /lib/pkgconfig
+  - /share/doc
+  - /share/man
+modules:
+  - shared-modules/python2.7/python-2.7.json
+
+  - shared-modules/glu/glu-9.json
+
+  - name: numpy
+    sources:
+      - type: archive
+        url: https://files.pythonhosted.org/packages/b7/6f/24647f014eef9b67a24adfcbcd4f4928349b4a0f8393b3d7fe648d4d2de3/numpy-1.16.6.zip
+        sha256: e5cf3fdf13401885e8eea8170624ec96225e2174eb0c611c6f26dd33b489e3ff
+    buildsystem: simple
+    build-commands:
+      - pip2 install --prefix=/app .
+
+  - name: pygame
+    # Mostly copied from shared-modules/pygame/pygame-1.9.6.json
+    sources:
+      - type: archive
+        url: https://files.pythonhosted.org/packages/0f/9c/78626be04e193c0624842090fe5555b3805c050dfaa81c8094d6441db2be/pygame-1.9.6.tar.gz
+        sha256: 301c6428c0880ecd4a9e3951b80e539c33863b6ff356a443db1758de4f297957
+      - type: patch
+        path: shared-modules/pygame/cython-fixes.patch
+    buildsystem: simple
+    build-commands:
+      - pip2 install --prefix=/app .
+    build-options:
+      env:
+        PORTMIDI_INC_PORTTIME: '1'
+        PYGAME_EXTRA_BASE: /app
+      arch:
+        aarch64:
+          env:
+            ORIGLIBDIRS: /lib:/lib64:/lib/aarch64-linux-gnu
+        arm:
+          env:
+            ORIGLIBDIRS: /lib:/lib/arm-linux-gnueabihf
+        i386:
+          env:
+            ORIGLIBDIRS: /lib:/lib/i386-linux-gnu
+        x86_64:
+          env:
+            ORIGLIBDIRS: /lib:/lib64:/lib/x86_64-linux-gnu
+    modules:
+      - shared-modules/SDL/SDL-1.2.15.json
+      - shared-modules/SDL/SDL_image-1.2.12.json
+      - shared-modules/SDL/SDL_ttf-2.0.11.json
+      - shared-modules/smpeg/smpeg-0.4.5.json
+      - shared-modules/SDL/SDL_mixer-1.2.12.json
+      - name: audiofile
+        sources:
+          - type: archive
+            url: http://audiofile.68k.org/audiofile-0.3.6.tar.gz
+            sha256: cdc60df19ab08bfe55344395739bb08f50fc15c92da3962fac334d3bff116965
+          - type: patch
+            path: shared-modules/pygame/audiofile-gcc6.patch
+      - name: libmikmod
+        sources:
+          - type: archive
+            url: https://sourceforge.net/projects/mikmod/files/libmikmod/3.3.11.1/libmikmod-3.3.11.1.tar.gz
+            sha256: ad9d64dfc8f83684876419ea7cd4ff4a41d8bcd8c23ef37ecb3a200a16b46d19
+        cleanup:
+          - /share/aclocal
+          - /share/info
+      - name: fluidsynth
+        buildsystem: cmake-ninja
+        config-opts:
+          - -DCMAKE_BUILD_TYPE=Release
+        sources:
+          - type: archive
+            url: https://github.com/FluidSynth/fluidsynth/archive/refs/tags/v1.1.11.tar.gz
+            sha256: da8878ff374d12392eecf87e96bad8711b8e76a154c25a571dd8614d1af80de8
+          - type: patch
+            path: shared-modules/pygame/fluidsynth-no-rawmidi.patch
+          - type: patch
+            path: shared-modules/pygame/glib.patch
+        cleanup:
+          - /lib64/pkgconfig
+      - name: portmidi
+        buildsystem: cmake-ninja
+        config-opts:
+          - -DCMAKE_BUILD_TYPE=Release
+          - -DCMAKE_LIBRARY_OUTPUT_DIRECTORY:STRING=/app/lib
+          - -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY:STRING=/app/lib
+          - -DCMAKE_RUNTIME_OUTPUT_DIRECTORY:STRING=/app/bin
+        sources:
+          - type: archive
+            url: https://github.com/PortMidi/portmidi/archive/refs/tags/v2.0.4.tar.gz
+            sha256: 64893e823ae146cabd3ad7f9a9a9c5332746abe7847c557b99b2577afa8a607c
+
+  - name: pyopengl
+    sources:
+      - type: archive
+        url: https://files.pythonhosted.org/packages/b8/73/31c8177f3d236e9a5424f7267659c70ccea604dab0585bfcd55828397746/PyOpenGL-3.1.5.tar.gz
+        sha256: 4107ba0d0390da5766a08c242cf0cf3404c377ed293c5f6d701e457c57ba3424
+    buildsystem: simple
+    build-commands:
+      - pip2 install --prefix=/app .
+
+  - name: pyopengl-accelerate
+    sources:
+      - type: archive
+        url: https://files.pythonhosted.org/packages/a2/3c/f42a62b7784c04b20f8b88d6c8ad04f4f20b0767b721102418aad94d8389/PyOpenGL-accelerate-3.1.5.tar.gz
+        sha256: 12e5518b0216a478527c7ce5ddce623c3d0517adeb87226da767772e8b7f2f06
+    buildsystem: simple
+    build-commands:
+      - pip2 install --prefix=/app .
+
+  - name: pillow
+    sources:
+      - type: archive
+        url: https://files.pythonhosted.org/packages/b3/d0/a20d8440b71adfbf133452d4f6e0fe80de2df7c2578c9b498fb812083383/Pillow-6.2.2.tar.gz
+        sha256: db9ff0c251ed066d367f53b64827cc9e18ccea001b986d08c265e53625dab950
+    buildsystem: simple
+    build-commands:
+      - pip2 install --prefix=/app .
+    build-options:
+      arch:
+        aarch64:
+          ldflags: -L/usr/lib/aarch64-linux-gnu
+        arm:
+          ldflags: -L/usr/lib/arm-linux-gnueabihf
+        i386:
+          ldflags: -L/usr/lib/i386-linux-gnu
+        x86_64:
+          ldflags: -L/usr/lib/x86_64-linux-gnu
+
+  - name: vorbis-tools
+    sources:
+      - type: archive
+        url: https://downloads.xiph.org/releases/vorbis/vorbis-tools-1.4.2.tar.gz
+        sha256: db7774ec2bf2c939b139452183669be84fda5774d6400fc57fde37f77624f0b0
+        x-checker-data:
+          type: html
+          url: https://downloads.xiph.org/releases/vorbis/
+          pattern: '>(vorbis-tools-([\d.]+)\.tar[^<]*)<'
+
+  - name: fofix
+    sources:
+      - type: archive
+        url: https://github.com/fofix/fofix/archive/refs/tags/v3.123.tar.gz
+        sha256: 933ab021350f6b2f37bd87e458b840d91d262a5b9f55c25fc6f0772b489deb1c
+      - type: file
+        path: org.fofix.three.metainfo.xml
+      - type: file
+        path: org.fofix.three.desktop
+      - type: script
+        dest-filename: fofix
+        commands:
+          - cd /app/share/fofix/src
+          - exec python2 FoFiX.py "$@"
+    buildsystem: simple
+    build-commands:
+      - |
+      - cp -r /run/build/fofix /app/share/fofix
+      - python2 -mcompileall /app/share/fofix
+      - install -Dm0755 -t /app/bin fofix
+      - |
+        for res in 16 32 48 64 128; do
+          ffmpeg -y -i data/fofix_icon.png -update 1 -vf "scale=${res}:ow:force_original_aspect_ratio=decrease,pad='max(iw,ih)':ow:(ow-iw)/2:(oh-ih)/2:black@0" fofix_icon.png || exit 1
+          install -Dm0644 fofix_icon.png "/app/share/icons/hicolor/${res}x${res}/apps/org.fofix.three.png" || exit 1
+        done
+      - install -Dm0644 -t /app/share/metainfo org.fofix.three.metainfo.xml
+      - install -Dm0644 -t /app/share/applications org.fofix.three.desktop

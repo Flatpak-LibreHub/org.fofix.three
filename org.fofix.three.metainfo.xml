@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>org.fofix.three</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  <name>Frets on Fire X</name>
+  <summary>A community-driven rhythm game inspired by Frets on Fire.</summary>
+  <description>
+    <p>
+      Frets on Fire X (FoFiX) is a rhythm game where you use your keyboard or guitar controller to simulate playing music.
+      As a fork of the original Frets on Fire, it expands on the gameplay experience with numerous enhancements and features.
+    </p>
+    <p>Key Features:</p>
+    <ul>
+      <li>Support for multiple game modes, including multiplayer</li>
+      <li>Customization with themes, songs, and scripts</li>
+      <li>Advanced charting tools for creating and editing songs</li>
+      <li>Compatibility with Guitar Hero™ and Rock Band™ songs</li>
+      <li>Online leaderboards and local scoring</li>
+      <li>Cross-platform support: Windows™, Linux®, Mac OS X™, and more</li>
+      <li>Open source project driven by an active community</li>
+    </ul>
+  </description>
+  <screenshots>
+    <screenshot type="default">
+      <image type="source">https://screenshots.debian.net/shrine/screenshot/8519/simage/large-c1280402fa39de82b1ee95e524917baf.png</image>
+    </screenshot>
+  </screenshots>
+  <launchable type="desktop-id">org.fofix.three.desktop</launchable>
+  <url type="homepage">https://fofix.org</url>
+  <developer_name>Linkid</developer_name>
+  <releases>
+    <release version="3.123" date="2021-10-16" />
+  </releases>
+  <content_rating type="oars-1.1">
+    <content_attribute id="language-profanity">mild</content_attribute>
+    <content_attribute id="violence-cartoon">none</content_attribute>
+    <content_attribute id="drugs-alcohol">none</content_attribute>
+  </content_rating>
+</component>
